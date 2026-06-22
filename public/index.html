@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Film Dixit</title>
+<style>
+  body { font-family: -apple-system, Arial, sans-serif; max-width: 480px; margin: 0 auto; padding: 16px; background:#111; color:#eee; }
+  h1 { font-size: 1.4rem; text-align:center; }
+  .card { background:#1d1d1d; border-radius:12px; padding:16px; margin:12px 0; }
+  input, button, select { width:100%; padding:12px; font-size:1rem; margin-top:8px; border-radius:8px; border:1px solid #444; box-sizing:border-box; }
+  input, select { background:#222; color:#eee; }
+  button { background:#5b46d1; color:white; border:none; cursor:pointer; }
+  button:disabled { background:#444; }
+  .player-row { display:flex; justify-content:space-between; padding:6px 0; border-bottom:1px solid #2a2a2a; }
+  .timer { font-size:2rem; text-align:center; }
+  .option { background:#222; padding:12px; border-radius:8px; margin:6px 0; cursor:pointer; }
+  .option.true { border:2px solid #4caf50; }
+  .hidden { display:none; }
+  .sinossi-box { font-style:italic; line-height:1.4; }
+  small { opacity:0.7; }
+  .ad-slot { background:#1a1a1a; border:1px dashed #444; border-radius:8px; padding:12px; margin:14px 0; text-align:center; font-size:0.85rem; color:#888; min-height:90px; display:flex; align-items:center; justify-content:center; }
+  .ad-slot.loaded { border:none; padding:0; background:transparent; }
+  .lang-label { font-size:0.85rem; opacity:0.8; margin-top:10px; }
+</style>
+<!-- Script AdSense: sostituisci ca-pub-XXXXXXXXXXXXXXXX con il tuo publisher ID quando approvato.
+     Finché non è configurato, lo slot mostra solo il placeholder (vedi adConfig.js). -->
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX" crossorigin="anonymous" data-ad-disabled="true" id="adsense-script"></script>
+</head>
+<body>
+
+<h1 id="app-title">🎬 Film Dixit</h1>
+
+<div id="screen-home" class="card">
+  <input id="name" data-i18n-placeholder="name_placeholder" placeholder="Il tuo nome" />
+
+  <p class="lang-label" data-i18n="language_label">Lingua</p>
+  <select id="language-select">
+    <option value="it">Italiano</option>
+    <option value="en">English</option>
+  </select>
+
+  <button id="btn-create" data-i18n="create_room">Crea stanza</button>
+  <input id="code" data-i18n-placeholder="code_placeholder" placeholder="Codice stanza" style="text-transform:uppercase" />
+  <button id="btn-join" data-i18n="join_room">Entra in stanza</button>
+  <p id="error" style="color:#ff6b6b"></p>
+</div>
+
+<div id="screen-lobby" class="card hidden">
+  <p><span data-i18n="room_code_label">Codice stanza:</span> <b id="room-code"></b></p>
+  <div id="player-list"></div>
+  <button id="btn-start" data-i18n="start_game">Inizia partita (host)</button>
+</div>
+
+<div id="screen-reading" class="card hidden">
+  <div class="timer" id="reading-timer">10</div>
+  <p data-i18n="read_together">Leggete insieme ad alta voce la sinossi:</p>
+  <p class="sinossi-box" id="reading-sinossi"></p>
+</div>
+
+<div id="screen-writing" class="card hidden">
+  <div class="timer" id="write-timer">60</div>
+  <p class="sinossi-box" id="writing-sinossi"></p>
+  <p data-i18n="write_prompt">Scrivi il titolo che pensi corrisponda alla sinossi:</p>
+  <input id="title-input" data-i18n-placeholder="title_placeholder" placeholder="Titolo del film" />
+  <button id="btn-submit-title" data-i18n="submit">Invia</button>
+  <p id="submitted-msg" class="hidden" data-i18n="submitted_msg">Inviato! In attesa degli altri...</p>
+</div>
+
+<div id="screen-voting" class="card hidden">
+  <p data-i18n="vote_prompt">Vota quale pensi sia il titolo VERO:</p>
+  <div id="options-list"></div>
+</div>
+
+<div id="screen-results" class="card hidden">
+  <h3 data-i18n="round_results">Risultati round</h3>
+  <p><span data-i18n="true_title_label">Titolo vero:</span> <b id="res-titolo-vero"></b></p>
+  <div id="res-options"></div>
+
+  <!-- Slot pubblicitario: momento di pausa naturale, non durante lo scrivere/votare -->
+  <div id="ad-slot" class="ad-slot">Spazio pubblicitario</div>
+
+  <h3 data-i18n="leaderboard">Classifica</h3>
+  <div id="res-players"></div>
+  <button id="btn-next-round" class="hidden" data-i18n="next_round">Prossimo round (host)</button>
+</div>
+
+<script src="adConfig.js"></script>
+<script src="i18n.js"></script>
+
+<script src="/socket.io/socket.io.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
